@@ -1,24 +1,14 @@
 use actix_web::{App, HttpServer, web};
 
-mod setting;
 mod app;
+mod setting;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    match setting::Configs::init() {
-        Ok(config) => {
-            println!("Config: {:?}", config);
-            println!("Running on port: {}", config.port);
-            println!("Environment: {}", config.env);
-        }
-        Err(e) => {
-            eprintln!("Failed to load config: {}", e);
-            std::process::exit(1);
-        }
-    }
-
+    let config = setting::Configs::init().expect("ไม่สามารถโหลดการตั้งค่าได้");
+    println!("starting on env: {}, port: {}", config.env, config.port);
     HttpServer::new(|| App::new().route("/order", web::post().to(crate::app::order::create_order)))
-        .bind(("127.0.0.1", 8080))?
+        .bind(format!("127.0.0.1:{}", config.port))?
         .run()
         .await
 }
