@@ -2,6 +2,7 @@ use actix_web::{HttpResponse, Responder, web};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 pub struct OrderRequest {
     customer_id: String,
     asset_id: String,
